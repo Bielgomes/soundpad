@@ -1,57 +1,53 @@
 import threading
-from time import sleep
 
 import sounddevice as sd
 import soundfile as sf
 
-stop_event = threading.Event()
-stop_event.clear()
+CHUNK_SIZE = 1024
 
 
 def play_on_device(
     device_id: int,
-    sound: list,
-    samplerate: int,
+    sound: sf.SoundFile,
 ):
-    try:
-        with sd.OutputStream(
-            device=device_id, samplerate=samplerate, channels=sound.shape[1]
-        ) as stream:
-            pos = 0
-            while pos < len(sound) and not stop_event.is_set():
-                chunk_size = 1024
-                stream.write(sound[pos : pos + chunk_size])
-                pos += chunk_size
-    except Exception as e:
-        print(f"Erro ao tocar no dispositivo {device_id}: {e}")
+    input_device_stream = sd.OutputStream(
+        blocksize=CHUNK_SIZE,
+        samplerate=sound.samplerate,
+        channels=sound.channels,
+        dtype="float32",
+    )
+    output_device_stream = sd.OutputStream(
+        device=device_id,
+        blocksize=CHUNK_SIZE,
+        samplerate=sound.samplerate,
+        channels=sound.channels,
+        dtype="float32",
+    )
+
+    input_device_stream.start()
+    output_device_stream.start()
+
+    stremed = 0
+    while stremed < len(sound):
+        chunk = sound.read(CHUNK_SIZE, dtype="float32")
+        if len(chunk) == 0:
+            break
+
+        input_device_stream.write(chunk * 0.5)
+        output_device_stream.write(chunk * 0.5)
+
+        stremed += CHUNK_SIZE
 
 
 def main():
     filename = "./src/sounds/foi-quando-gyro-finalmente-entendeu.mp3"
-    data, samplerate = sf.read(filename, dtype="float32")
+    sound = sf.SoundFile(filename)
 
-    sound = data * 0.1
+    output_device = 12
+    thread = threading.Thread(target=play_on_device, args=(output_device, sound))
 
-    # fone = 31
-    fone = sd.default.device[1]
-    microfone = 12
-
-    thread1 = threading.Thread(target=play_on_device, args=(fone, sound, samplerate))
-    thread2 = threading.Thread(
-        target=play_on_device, args=(microfone, sound, samplerate)
-    )
-
-    thread1.start()
-    thread2.start()
-
-    sleep(2)
-
-    # stop_event.set()
-
-    thread1.join()
-    thread2.join()
-
-    # stop_event.clear()
+    thread.start()
+    thread.join()
 
 
 if __name__ == "__main__":
