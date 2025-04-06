@@ -10,12 +10,6 @@ from event_handler import event_handler
 HOST = "localhost"
 PORT = 4358
 
-CHUNK_SIZE = 1024
-
-INPUT_VOLUME = 0.5
-OUTPUT_VOLUME = 0.5
-INPUT_MUTED = False
-
 
 async def message_handler(websocket: ServerConnection):
     """

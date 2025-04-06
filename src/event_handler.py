@@ -12,6 +12,12 @@ from utils import get_output_device, send_message
 sound_service = SoundService()
 ALLOWED_EVENTS = {"PLAY_SOUND", "FETCH_SOUNDS"}
 
+CHUNK_SIZE = 1024
+
+INPUT_VOLUME = 0.5
+OUTPUT_VOLUME = 0.5
+INPUT_MUTED = False
+
 
 def play_sound(
     device_id: int,
