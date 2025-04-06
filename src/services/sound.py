@@ -27,9 +27,6 @@ class SoundService:
         sounds = [
             sound.model_json_schema() for sound in self.__sound_repository.get_all()
         ]
-        if not sounds:
-            raise Exception("No sounds found")
-
         return sounds
 
     def get(self, id: int) -> dict:
