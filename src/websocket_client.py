@@ -1,11 +1,8 @@
 import asyncio
-import json
 
-from websockets import ServerConnection, connect
+from websockets import connect
 
-
-async def send_message(websocket: ServerConnection, message: json):
-    await websocket.send(json.dumps(message))
+from utils import send_message
 
 
 async def hello():
@@ -13,7 +10,7 @@ async def hello():
         await send_message(
             websocket,
             {
-                "type": "PLAY_SOUND",
+                "type": "FETCH_SOUNDS",
                 "id": 1,
             },
         )
