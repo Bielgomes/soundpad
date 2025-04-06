@@ -6,11 +6,12 @@ import sounddevice as sd
 import soundfile as sf
 from websockets import ServerConnection
 
+from events import INCOMING_EVENT_VALUES, IncomingEvent, OutgoingEvent
 from services.sound import SoundService
 from utils import get_output_device, send_message
 
 sound_service = SoundService()
-ALLOWED_EVENTS = {"PLAY_SOUND", "FETCH_SOUNDS"}
+
 
 CHUNK_SIZE = 1024
 
@@ -69,8 +70,8 @@ def play_sound(
         send_message(
             websocket,
             {
-                "type": "SOUND_FINISHED",
-                "sound_id": 1,
+                "type": OutgoingEvent.SOUND_STOPPED,
+                "soundId": 1,
             },
         ),
         loop,
@@ -87,17 +88,43 @@ async def event_handler(websocket: ServerConnection, event: dict):
     :param event: The event received from the client.
     """
     try:
-        if event["type"] not in ALLOWED_EVENTS:
-            await send_message(
+        if event["type"] not in INCOMING_EVENT_VALUES:
+            return await send_message(
                 websocket,
                 {
-                    "type": "ERROR",
+                    "type": OutgoingEvent.EVENT_NOT_SUPPORTED,
                     "error": f"Event type {event['type']} not supported",
                 },
             )
-            return
 
-        if event["type"] == "PLAY_SOUND":
+        if event["type"] == IncomingEvent.SOUND_ADD:
+            sound = event.get("data", None)
+            if sound is None:
+                raise ValueError("Sound data is required")
+
+            new_sound_id = sound_service.add(sound)
+            await send_message(
+                websocket,
+                {
+                    "type": OutgoingEvent.SOUND_ADDED,
+                    "soundId": new_sound_id,
+                },
+            )
+
+        elif event["type"] == IncomingEvent.SOUND_REMOVE:
+            pass
+
+        elif event["type"] == IncomingEvent.SOUND_FETCH:
+            sounds = sound_service.get_all()
+            await send_message(
+                websocket,
+                {
+                    "type": OutgoingEvent.SOUND_FETCHED,
+                    "sounds": sounds,
+                },
+            )
+
+        elif event["type"] == IncomingEvent.SOUND_PLAY:
             filename = "./src/sounds/toma-milk-shake-de-morango.mp3"
             sound = sf.SoundFile(filename)
 
@@ -110,23 +137,18 @@ async def event_handler(websocket: ServerConnection, event: dict):
 
             await send_message(
                 websocket,
-                {"type": "PLAYING_SOUND", "sound_id": 1},
+                {"type": OutgoingEvent.SOUND_PLAYING, "soundId": 1},
             )
-        elif event["type"] == "FETCH_SOUNDS":
-            sounds = sound_service.get_all()
-            await send_message(
-                websocket,
-                {
-                    "type": "SOUNDS_LIST",
-                    "sounds": sounds,
-                },
-            )
+
+        elif event["type"] == IncomingEvent.SOUND_STOP:
+            pass
+
     except Exception as error:
         print(traceback.format_exc())
         await send_message(
             websocket,
             {
-                "type": "ERROR",
+                "type": OutgoingEvent.GENERIC_ERROR,
                 "error": str(error),
             },
         )
