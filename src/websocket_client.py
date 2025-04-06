@@ -9,16 +9,17 @@ async def send_message(websocket: ServerConnection, message: json):
 
 
 async def hello():
-    async with connect("ws://localhost:8001") as websocket:
+    async with connect("ws://localhost:4358") as websocket:
         await send_message(
             websocket,
             {
-                "type": "ECHO",
-                "message": "Hello, server!",
+                "type": "PLAY_SOUND",
+                "id": 1,
             },
         )
-        message = await websocket.recv()
-        print(f"Received message: {message}")
+        while True:
+            message = await websocket.recv()
+            print(f"Received message: {message}")
 
 
 if __name__ == "__main__":
