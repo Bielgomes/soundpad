@@ -25,15 +25,15 @@ class SoundService:
         Get all sound records.
         """
         sounds = [
-            sound.model_json_schema() for sound in self.__sound_repository.get_all()
+            sound.model_dump_json() for sound in self.__sound_repository.get_all()
         ]
         return sounds
 
-    def get(self, id: int) -> dict:
+    def get(self, id: int) -> Sound:
         """
         Get a sound record by ID.
         """
-        sound = self.__sound_repository.get(id).model_json_schema()
+        sound = self.__sound_repository.get(id)
         if not sound:
             raise Exception(f"Sound with ID {id} not found")
 
