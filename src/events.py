@@ -23,9 +23,18 @@ class OutgoingEvent(str, Enum):
     SOUND_FETCHED = "SOUND:FETCHED"
     SOUND_PLAYING = "SOUND:PLAYING"
     SOUND_STOPPED = "SOUND:STOPPED"
+
+
+class ErrorEvent(str, Enum):
+    """
+    Enum for error events.
+    """
+
     GENERIC_ERROR = "ERROR:GENERIC"
     EVENT_NOT_SUPPORTED = "ERROR:EVENT_NOT_SUPPORTED"
+    MISSING_FIELD = "ERROR:MISSING_FIELD"
+    VALIDATION_ERROR = "ERROR:VALIDATION_ERROR"
+    SOUND_FILE_NOT_FOUND = "ERROR:SOUND_FILE_NOT_FOUND"
 
 
 INCOMING_EVENT_VALUES = {e.value for e in IncomingEvent}
-OUTGOING_EVENT_VALUES = {e.value for e in OutgoingEvent}

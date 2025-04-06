@@ -1,3 +1,4 @@
+from errors import ValidationError
 from models.sound import Sound
 from repositories.sound import SoundRepository
 
@@ -16,7 +17,7 @@ class SoundService:
         try:
             new_sound = Sound.model_validate(sound)
         except Exception as error:
-            raise Exception(f"Invalid sound data: {error}")
+            raise ValidationError(str(error))
 
         return self.__sound_repository.create(new_sound)
 
