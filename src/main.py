@@ -77,7 +77,8 @@ def play_sound(
     output_device_stream.start()
 
     streamed = 0
-    while streamed < len(sound):
+    sound_size = len(sound)
+    while streamed < sound_size:
         chunk = sound.read(CHUNK_SIZE, dtype="float32")
         if len(chunk) == 0:
             break
