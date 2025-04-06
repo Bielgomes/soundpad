@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class IncomingEvent(Enum):
+class IncomingEvent(str, Enum):
     """
     Enum for incoming events.
     """
@@ -13,7 +13,7 @@ class IncomingEvent(Enum):
     SOUND_STOP = "SOUND:STOP"
 
 
-class OutgoingEvent(Enum):
+class OutgoingEvent(str, Enum):
     """
     Enum for outgoing events.
     """
