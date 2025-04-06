@@ -32,6 +32,7 @@ class SQLite:
         """
         Initialize the database and create the tables if they do not exist.
         """
+        print("✨ Initializing database...")
         with self.connection() as connection:
             cursor = connection.cursor()
 
@@ -45,6 +46,8 @@ class SQLite:
             """
             cursor.execute(sound_table)
             connection.commit()
+
+            print("✅ Database initialized successfully!")
 
 
 sqlite = SQLite("database.db")
