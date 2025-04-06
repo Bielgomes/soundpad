@@ -12,7 +12,7 @@ class SoundRepository(AbstractRepository):
     def __init__(self):
         super().__init__()
 
-    def create(self, sound: Sound) -> None:
+    def create(self, sound: Sound) -> int:
         self._cursor.execute(
             """
             INSERT INTO sound (name, path)
@@ -21,6 +21,7 @@ class SoundRepository(AbstractRepository):
             (sound.name, sound.path),
         )
         self._commit()
+        return self._cursor.lastrowid
 
     def get_all(self) -> list[Sound]:
         self._cursor.execute(

@@ -9,7 +9,7 @@ class SoundService:
 
     __sound_repository: SoundRepository = SoundRepository()
 
-    def create(self, sound: dict) -> None:
+    def create(self, sound: dict) -> int:
         """
         Create a new sound record.
         """
@@ -18,7 +18,7 @@ class SoundService:
         except Exception as error:
             raise Exception(f"Invalid sound data: {error}")
 
-        self.__sound_repository.create(new_sound)
+        return self.__sound_repository.create(new_sound)
 
     def get_all(self) -> list[dict]:
         """
