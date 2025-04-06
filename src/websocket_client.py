@@ -2,6 +2,7 @@ import asyncio
 
 from websockets import connect
 
+from events import IncomingEvent
 from utils import send_message
 
 
@@ -10,10 +11,29 @@ async def hello():
         await send_message(
             websocket,
             {
-                "type": "FETCH_SOUNDS",
-                "id": 1,
+                "type": IncomingEvent.SOUND_FETCH,
             },
         )
+
+        # await send_message(
+        #     websocket,
+        #     {
+        #         "type": IncomingEvent.SOUND_ADD,
+        #         "data": {
+        #             "name": "test",
+        #             "path": ".\src\sounds\toma-milk-shake-de-morango.mp3",
+        #         },
+        #     },
+        # )
+
+        await send_message(
+            websocket,
+            {
+                "type": IncomingEvent.SOUND_PLAY,
+                "soundId": 1,
+            },
+        )
+
         while True:
             message = await websocket.recv()
             print(f"Received message: {message}")
