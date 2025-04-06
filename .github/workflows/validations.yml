@@ -1,0 +1,20 @@
+name: Validations
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: 🧹 Code style and file formatting
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Lint
+        run: uv run ruff check
