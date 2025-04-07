@@ -1,7 +1,7 @@
 from typing import Union
 
-from models.sound import Sound
-from repositories.abstract_repository import AbstractRepository
+from database.models import Sound
+from database.repositories.abstract_repository import AbstractRepository
 
 
 class SoundRepository(AbstractRepository):

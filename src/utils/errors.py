@@ -1,4 +1,4 @@
-from events import ErrorEvent
+from utils.events import ErrorEvent
 
 
 class EventError(Exception):

@@ -1,6 +1,6 @@
-from errors import SoundNotFoundError, ValidationError
-from models.sound import Sound
-from repositories.sound import SoundRepository
+from database.models import Sound
+from database.repositories.sound import SoundRepository
+from utils.errors import SoundNotFoundError, ValidationError
 
 
 class SoundService:

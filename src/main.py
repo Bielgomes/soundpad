@@ -3,34 +3,33 @@ import json
 import os
 import signal
 
-from websockets import ConnectionClosed, ServerConnection, serve
+import websockets
 
-from event_handler import event_handler
-
-HOST = "localhost"
-PORT = 4358
+from global_config import config
+from handlers.global_event_handler import global_event_handler
 
 
-async def message_handler(websocket: ServerConnection):
+async def echo(websocket: websockets.ServerConnection):
     """
-    Handle incoming messages from the websocket connection.
+    Handle incoming websocket connections and events.
+    This function receives events from the websocket and processes them using the global event handler.
 
-    :param websocket: The websocket connection to handle messages from.
+    :param websocket: The websocket connection to handle.
     """
     try:
         while True:
-            message = await websocket.recv()
-            print(f"Received message: {message}")
+            event = await websocket.recv()
+            print(f"📫 Received event: {event}")
 
-            await event_handler(websocket, json.loads(message))
-    except ConnectionClosed:
-        print("Connection closed")
+            await global_event_handler(websocket, json.loads(event))
+    except websockets.ConnectionClosed:
+        print("❌ Connection closed")
         os.kill(os.getpid(), signal.SIGINT)
 
 
 async def main():
-    async with serve(message_handler, HOST, PORT) as server:
-        print(f"🚀 Server started on ws://{HOST}:{PORT}")
+    async with websockets.serve(echo, config.host, config.port) as server:
+        print(f"🚀 Server started on ws://{config.host}:{config.port}")
         await server.serve_forever()
 
 

@@ -1,4 +1,4 @@
-from lib.sqlite import sqlite
+from database.sqlite import sqlite
 
 
 class AbstractRepository:
@@ -10,6 +10,7 @@ class AbstractRepository:
         """
         Initialize the repository with a connection to the database.
         """
+
         self.__conn = sqlite.connection()
         self._cursor = self.__conn.cursor()
 
@@ -17,4 +18,5 @@ class AbstractRepository:
         """
         Commit the current transaction to the database.
         """
+
         self.__conn.commit()

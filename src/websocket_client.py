@@ -1,9 +1,10 @@
 import asyncio
+import json
 
 from websockets import connect
 
-from events import IncomingEvent
-from utils import send_message
+from utils.events import IncomingEvent
+from utils.functions import send_message
 
 
 async def hello():
@@ -15,13 +16,16 @@ async def hello():
             },
         )
 
+        all_sounds = json.loads(await websocket.recv())
+        first_sound = all_sounds["sounds"][0]["id"] if all_sounds else None
+
         # await send_message(
         #     websocket,
         #     {
         #         "type": IncomingEvent.SOUND_ADD,
         #         "data": {
-        #             "name": "test",
-        #             "path": ".\src\sounds\toma-milk-shake-de-morango.mp3",
+        #             "name": "plakton-augh",
+        #             "path": ".\src\sounds\plankton-augh.mp3",
         #         },
         #     },
         # )
@@ -30,7 +34,7 @@ async def hello():
             websocket,
             {
                 "type": IncomingEvent.SOUND_PLAY,
-                "soundId": 2,
+                "soundId": first_sound,
             },
         )
 

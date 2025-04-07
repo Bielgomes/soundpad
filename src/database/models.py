@@ -15,6 +15,8 @@ class Sound(BaseModel):
         """
         Validate the sound path to ensure it ends with .mp3 or .wav.
         """
+
         if not path.endswith((".mp3", ".wav")):
             raise ValueError("Sound path must end with .mp3 or .wav")
+
         return path
