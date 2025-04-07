@@ -12,7 +12,7 @@ from errors import (
     MissingFieldError,
     UnsupportedEventError,
 )
-from events import INCOMING_EVENT_VALUES, ErrorEvent, IncomingEvent, OutgoingEvent
+from events import ErrorEvent, IncomingEvent, OutgoingEvent
 from services.sound import SoundService
 from utils import get_output_device, send_message
 
@@ -85,6 +85,89 @@ def play_sound(
     )
 
 
+async def handle_sound_add(websocket, event):
+    sound = event.get("data", None)
+    if sound is None:
+        raise MissingFieldError("data")
+
+    new_sound_id = sound_service.create(sound)
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_ADDED, "soundId": new_sound_id},
+    )
+
+
+async def handle_sound_remove(websocket, event):
+    sound_id = event.get("soundId", None)
+    if sound_id is None:
+        raise MissingFieldError("soundId")
+
+    sound_service.remove(sound_id)
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_REMOVED, "soundId": sound_id},
+    )
+
+
+async def handle_sound_fetch(websocket, event):
+    sounds = sound_service.get_all()
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_FETCHED, "sounds": sounds},
+    )
+
+
+async def handle_sound_play(websocket, event):
+    sound_id = event.get("soundId", None)
+    if sound_id is None:
+        raise MissingFieldError("soundId")
+
+    sound = sound_service.get(sound_id)
+
+    try:
+        sound_file = sf.SoundFile(sound.path)
+    except Exception:
+        raise InvalidSoundFileError(sound.path)
+
+    output_device = await get_output_device()
+    thread = threading.Thread(
+        target=play_sound,
+        args=(
+            output_device,
+            sound_file,
+            sound.id,
+            websocket,
+            asyncio.get_event_loop(),
+        ),
+    )
+    thread.start()
+
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_PLAYING, "soundId": sound_id},
+    )
+
+
+async def handle_sound_stop(websocket, event):
+    sound_id = event.get("soundId", None)
+    if sound_id is None:
+        raise MissingFieldError("soundId")
+
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_STOPPED, "soundId": sound_id},
+    )
+
+
+handlers = {
+    IncomingEvent.SOUND_ADD: handle_sound_add,
+    IncomingEvent.SOUND_REMOVE: handle_sound_remove,
+    IncomingEvent.SOUND_FETCH: handle_sound_fetch,
+    IncomingEvent.SOUND_PLAY: handle_sound_play,
+    IncomingEvent.SOUND_STOP: handle_sound_stop,
+}
+
+
 async def event_handler(websocket: ServerConnection, event: dict):
     """
     Handle events received from the websocket connection.
@@ -95,89 +178,14 @@ async def event_handler(websocket: ServerConnection, event: dict):
     :param event: The event received from the client.
     """
     try:
-        if event["type"] not in INCOMING_EVENT_VALUES:
+        if not event.get("type"):
+            raise MissingFieldError("type")
+
+        handler = handlers.get(event["type"])
+        if handler is None:
             raise UnsupportedEventError(event["type"])
 
-        if event["type"] == IncomingEvent.SOUND_ADD:
-            sound = event.get("data", None)
-            if sound is None:
-                raise MissingFieldError("data")
-
-            new_sound_id = sound_service.create(sound)
-            await send_message(
-                websocket,
-                {
-                    "type": OutgoingEvent.SOUND_ADDED,
-                    "soundId": new_sound_id,
-                },
-            )
-
-        elif event["type"] == IncomingEvent.SOUND_REMOVE:
-            sound_id = event.get("soundId", None)
-            if sound_id is None:
-                raise MissingFieldError("soundId")
-
-            sound_service.remove(sound_id)
-            await send_message(
-                websocket,
-                {
-                    "type": OutgoingEvent.SOUND_REMOVED,
-                    "soundId": sound_id,
-                },
-            )
-
-        elif event["type"] == IncomingEvent.SOUND_FETCH:
-            sounds = sound_service.get_all()
-            await send_message(
-                websocket,
-                {
-                    "type": OutgoingEvent.SOUND_FETCHED,
-                    "sounds": sounds,
-                },
-            )
-
-        elif event["type"] == IncomingEvent.SOUND_PLAY:
-            sound_id = event.get("soundId", None)
-            if sound_id is None:
-                raise MissingFieldError("soundId")
-
-            sound = sound_service.get(sound_id)
-
-            try:
-                sound_file = sf.SoundFile(sound.path)
-            except Exception:
-                raise InvalidSoundFileError(sound.path)
-
-            output_device = await get_output_device()
-            thread = threading.Thread(
-                target=play_sound,
-                args=(
-                    output_device,
-                    sound_file,
-                    sound.id,
-                    websocket,
-                    asyncio.get_event_loop(),
-                ),
-            )
-            thread.start()
-
-            await send_message(
-                websocket,
-                {"type": OutgoingEvent.SOUND_PLAYING, "soundId": 1},
-            )
-
-        elif event["type"] == IncomingEvent.SOUND_STOP:
-            sound_id = event.get("soundId", None)
-            if sound_id is None:
-                raise MissingFieldError("soundId")
-
-            await send_message(
-                websocket,
-                {
-                    "type": OutgoingEvent.SOUND_STOPPED,
-                    "soundId": sound_id,
-                },
-            )
+        await handler(websocket, event)
 
     except EventError as error:
         await send_message(

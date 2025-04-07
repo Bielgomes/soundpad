@@ -1,4 +1,4 @@
-from errors import ValidationError
+from errors import SoundNotFoundError, ValidationError
 from models.sound import Sound
 from repositories.sound import SoundRepository
 
@@ -36,7 +36,7 @@ class SoundService:
         """
         sound = self.__sound_repository.get(id)
         if not sound:
-            raise Exception(f"Sound with ID {id} not found")
+            raise SoundNotFoundError(id)
 
         return sound
 
@@ -47,7 +47,7 @@ class SoundService:
         try:
             updated_sound = Sound.model_validate(sound)
         except Exception as error:
-            raise Exception(f"Invalid sound data: {error}")
+            raise ValidationError(str(error))
 
         self.__sound_repository.update(id, updated_sound)
 
@@ -57,6 +57,6 @@ class SoundService:
         """
         sound = self.__sound_repository.get(id)
         if not sound:
-            raise Exception(f"Sound with ID {id} not found")
+            raise SoundNotFoundError(id)
 
         self.__sound_repository.delete(id)

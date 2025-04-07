@@ -33,6 +33,14 @@ class InvalidSoundFileError(EventError):
         self.type = ErrorEvent.SOUND_FILE_NOT_FOUND
 
 
+class SoundNotFoundError(EventError):
+    """Raised when the sound is not found."""
+
+    def __init__(self, sound_id: int):
+        super().__init__(f"Sound with ID {sound_id} not found")
+        self.type = ErrorEvent.SOUND_NOT_FOUND
+
+
 class UnsupportedEventError(EventError):
     """Raised when the event type is not supported."""
 

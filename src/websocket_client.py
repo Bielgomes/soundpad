@@ -30,7 +30,7 @@ async def hello():
             websocket,
             {
                 "type": IncomingEvent.SOUND_PLAY,
-                "soundId": 1,
+                "soundId": 2,
             },
         )
 
