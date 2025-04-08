@@ -1,11 +1,14 @@
+from typing import Union
+
+
 class GlobalConfig:
-    __instance = None
+    _instance: Union["GlobalConfig", None] = None
 
     def __new__(cls) -> "GlobalConfig":
-        if not cls.__instance:
-            cls.__instance = super(GlobalConfig, cls).__new__(cls)
-            cls.__instance._init()
-        return cls.__instance
+        if not cls._instance:
+            cls._instance = super(GlobalConfig, cls).__new__(cls)
+            cls._instance._init()
+        return cls._instance
 
     def _init(self) -> None:
         self._host = "localhost"
