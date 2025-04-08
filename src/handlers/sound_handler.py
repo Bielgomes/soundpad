@@ -1,16 +1,16 @@
 import asyncio
-import threading
 
 import soundfile as sf
 import websockets
 
 from database.services.sound import SoundService
+from sound_controller import sound_controller
 from utils.errors import (
     InvalidSoundFileError,
     MissingFieldError,
 )
 from utils.events import OutgoingEvent
-from utils.functions import get_output_device, play_sound, send_message
+from utils.functions import send_message
 
 sound_service = SoundService()
 
@@ -55,35 +55,14 @@ async def handle_sound_play(websocket: websockets.ServerConnection, event: dict)
     sound = sound_service.get(sound_id)
 
     try:
-        sound_file = sf.SoundFile(sound.path)
+        sf.SoundFile(sound.path)
     except Exception:
         raise InvalidSoundFileError(sound.path)
 
-    output_device = await get_output_device()
-    thread = threading.Thread(
-        target=play_sound,
-        args=(
-            output_device,
-            sound_file,
-            sound.id,
-            websocket,
-            asyncio.get_event_loop(),
-        ),
-    )
-    thread.start()
-
-    await send_message(
-        websocket,
-        {"type": OutgoingEvent.SOUND_PLAYING, "soundId": sound_id},
+    await sound_controller.play_sound(
+        sound.path, sound_id, websocket, asyncio.get_event_loop()
     )
 
 
 async def handle_sound_stop(websocket: websockets.ServerConnection, event: dict):
-    sound_id = event.get("soundId", None)
-    if sound_id is None:
-        raise MissingFieldError("soundId")
-
-    await send_message(
-        websocket,
-        {"type": OutgoingEvent.SOUND_STOPPED, "soundId": sound_id},
-    )
+    sound_controller.stop_sound()

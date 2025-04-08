@@ -41,6 +41,14 @@ class SoundNotFoundError(EventError):
         self.type = ErrorEvent.SOUND_NOT_FOUND
 
 
+class VoicemeeterPlaybackDeviceError(EventError):
+    """Raised when the playback device (Voicemeeter Input) is not found or is ambiguous."""
+
+    def __init__(self, message: str):
+        super().__init__(f"Voicemeeter playback device error: {message}")
+        self.type = ErrorEvent.VOICEMEETER_OUTPUT
+
+
 class UnsupportedEventError(EventError):
     """Raised when the event type is not supported."""
 

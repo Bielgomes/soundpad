@@ -38,9 +38,21 @@ async def hello():
             },
         )
 
+        await send_message(
+            websocket,
+            {
+                "type": IncomingEvent.SOUND_PLAY,
+                "soundId": first_sound,
+            },
+        )
+
         while True:
-            message = await websocket.recv()
-            print(f"Received message: {message}")
+            try:
+                message = await websocket.recv()
+                print(f"Received message: {message}")
+            except Exception as e:
+                print(f"Error receiving message: {e}")
+                break
 
 
 if __name__ == "__main__":
