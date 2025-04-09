@@ -2,6 +2,7 @@ import traceback
 
 import websockets
 
+from handlers.config_handler import handle_config_fetch, handle_config_update
 from handlers.sound_handler import (
     handle_sound_add,
     handle_sound_fetch,
@@ -23,6 +24,8 @@ handlers = {
     IncomingEvent.SOUND_FETCH: handle_sound_fetch,
     IncomingEvent.SOUND_PLAY: handle_sound_play,
     IncomingEvent.SOUND_STOP: handle_sound_stop,
+    IncomingEvent.CONFIG_FETCH: handle_config_fetch,
+    IncomingEvent.CONFIG_UPDATE: handle_config_update,
 }
 
 
@@ -35,6 +38,7 @@ async def global_event_handler(websocket: websockets.ServerConnection, event: di
     :param websocket: The websocket connection to send the message to.
     :param event: The event received from the client.
     """
+
     try:
         if not event.get("type"):
             raise MissingFieldError("type")

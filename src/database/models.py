@@ -20,3 +20,10 @@ class Sound(BaseModel):
             raise ValueError("Sound path must end with .mp3 or .wav")
 
         return path
+
+
+class Config(BaseModel):
+    id: Optional[int] = Field(default=None, title="Config ID")
+    input_volume: float = Field(default=0.5, ge=0.0, le=1.0, title="Input Volume")
+    output_volume: float = Field(default=0.5, ge=0.0, le=1.0, title="Output Volume")
+    input_muted: bool = Field(default=False, title="Input Muted")

@@ -1,24 +1,30 @@
 from typing import Union
 
+from database.models import Config
+from database.services.config import ConfigService
+
 
 class GlobalConfig:
     _instance: Union["GlobalConfig", None] = None
 
-    def __new__(cls) -> "GlobalConfig":
+    def __new__(cls, config: Config) -> "GlobalConfig":
         if not cls._instance:
             cls._instance = super(GlobalConfig, cls).__new__(cls)
-            cls._instance._init()
+            cls._instance._init(config)
+
         return cls._instance
 
-    def _init(self) -> None:
+    def _init(self, config: Config) -> None:
         self._host = "localhost"
         self._port = 4358
 
         self._chunk_size = 1024
 
-        self._input_volume = 0.2
-        self._output_volume = 0.2
-        self._input_muted = False
+        self._input_volume = config.input_volume
+        self._output_volume = config.output_volume
+        self._input_muted = config.input_muted
+
+        print("🔧 Config synced with database: { " + f"{config}" + " }")
 
     @property
     def host(self) -> str:
@@ -66,4 +72,5 @@ class GlobalConfig:
             raise ValueError("Muted status must be a boolean.")
 
 
-config = GlobalConfig()
+config_service = ConfigService()
+config = GlobalConfig(config_service.get())

@@ -17,7 +17,7 @@ async def hello():
         )
 
         all_sounds = json.loads(await websocket.recv())
-        first_sound = all_sounds["sounds"][0]["id"] if all_sounds else None
+        first_sound = all_sounds["sounds"][1]["id"] if all_sounds else None
 
         # await send_message(
         #     websocket,
@@ -25,7 +25,7 @@ async def hello():
         #         "type": IncomingEvent.SOUND_ADD,
         #         "data": {
         #             "name": "plakton-augh",
-        #             "path": ".\src\sounds\plankton-augh.mp3",
+        #             "path": "C:\\Users\\Gabriel\\Music\\audios\\plankton-oooooh.mp3",
         #         },
         #     },
         # )
@@ -38,11 +38,42 @@ async def hello():
             },
         )
 
+        await asyncio.sleep(1)
         await send_message(
             websocket,
             {
-                "type": IncomingEvent.SOUND_PLAY,
-                "soundId": first_sound,
+                "type": IncomingEvent.CONFIG_UPDATE,
+                "config": {
+                    "input_volume": 0.1,
+                    "output_volume": 0.1,
+                    "input_muted": False,
+                },
+            },
+        )
+
+        await asyncio.sleep(1)
+        await send_message(
+            websocket,
+            {
+                "type": IncomingEvent.CONFIG_UPDATE,
+                "config": {
+                    "input_volume": 0.2,
+                    "output_volume": 0.2,
+                    "input_muted": True,
+                },
+            },
+        )
+
+        await asyncio.sleep(1)
+        await send_message(
+            websocket,
+            {
+                "type": IncomingEvent.CONFIG_UPDATE,
+                "config": {
+                    "input_volume": 0.5,
+                    "output_volume": 0.5,
+                    "input_muted": False,
+                },
             },
         )
 

@@ -16,6 +16,7 @@ async def echo(websocket: websockets.ServerConnection):
 
     :param websocket: The websocket connection to handle.
     """
+
     try:
         while True:
             event = await websocket.recv()

@@ -45,9 +45,30 @@ class SQLite:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """
-            cursor.execute(sound_table)
-            connection.commit()
 
+            config_table = """
+            CREATE TABLE IF NOT EXISTS Config (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                input_volume REAL NOT NULL,
+                output_volume REAL NOT NULL,
+                input_muted BOOLEAN NOT NULL
+            );
+            """
+
+            cursor.execute(sound_table)
+            cursor.execute(config_table)
+
+            cursor.execute("SELECT COUNT(*) FROM Config")
+            count = cursor.fetchone()[0]
+            if count == 0:
+                cursor.execute(
+                    """
+                    INSERT INTO Config (input_volume, output_volume, input_muted)
+                    VALUES (0.5, 0.5, 0)
+                    """
+                )
+
+            connection.commit()
             print("✅ Database initialized successfully!")
 
 

@@ -41,6 +41,14 @@ class SoundNotFoundError(EventError):
         self.type = ErrorEvent.SOUND_NOT_FOUND
 
 
+class ConfigNotFoundError(EventError):
+    """Raised when the config is not found."""
+
+    def __init__(self, config_id: int):
+        super().__init__(f"Config with ID {config_id} not found")
+        self.type = ErrorEvent.CONFIG_NOT_FOUND
+
+
 class VoicemeeterPlaybackDeviceError(EventError):
     """Raised when the playback device (Voicemeeter Input) is not found or is ambiguous."""
 
