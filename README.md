@@ -1,6 +1,7 @@
 # Soundpad
 
-A simple soundpad application
+A simple soundpad application.
+This application needs voicemeeter installed and running to work properly.
 
 ## Contributors
 <a href="https://github.com/Bielgomes/soundpad/graphs/contributors">
