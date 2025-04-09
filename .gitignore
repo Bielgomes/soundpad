@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Cache
+.ruff_cache/
+
 # Database files
 *.sqlite3
 *.db
