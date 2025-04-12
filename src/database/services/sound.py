@@ -10,7 +10,7 @@ class SoundService:
 
     __sound_repository: SoundRepository = SoundRepository()
 
-    def create(self, sound: dict) -> int:
+    def create(self, sound: dict) -> dict:
         """
         Create a new sound record.
         """
@@ -19,7 +19,8 @@ class SoundService:
         except Exception as error:
             raise ValidationError(str(error))
 
-        return self.__sound_repository.create(new_sound)
+        created_sound = self.__sound_repository.create(new_sound)
+        return created_sound.model_dump()
 
     def get_all(self) -> list[dict]:
         """

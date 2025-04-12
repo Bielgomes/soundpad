@@ -20,10 +20,10 @@ async def handle_sound_add(websocket: websockets.ServerConnection, event: dict):
     if sound is None:
         raise MissingFieldError("data")
 
-    new_sound_id = sound_service.create(sound)
+    new_sound = sound_service.create(sound)
     await send_message(
         websocket,
-        {"type": OutgoingEvent.SOUND_ADDED, "soundId": new_sound_id},
+        {"type": OutgoingEvent.SOUND_ADDED, "sound": new_sound},
     )
 
 
