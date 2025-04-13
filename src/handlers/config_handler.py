@@ -15,7 +15,7 @@ async def handle_config_fetch(websocket: websockets.ServerConnection, event: dic
         websocket,
         {
             "type": OutgoingEvent.CONFIG_FETCHED,
-            "config": config,
+            "config": config.model_dump(),
         },
     )
 
