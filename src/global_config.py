@@ -5,6 +5,11 @@ from database.services.config import ConfigService
 
 
 class GlobalConfig:
+    """
+    Singleton class to manage global configuration settings for the application.
+    This class is designed to be initialized only once and provides access to configuration settings
+    """
+
     _instance: Union["GlobalConfig", None] = None
 
     def __new__(cls, config: Config) -> "GlobalConfig":

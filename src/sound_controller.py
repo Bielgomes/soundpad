@@ -13,6 +13,11 @@ from utils.functions import send_message
 
 
 class SoundController:
+    """
+    Singleton class to manage sound playback using SoundDevice and SoundFile.
+    This class is responsible for playing sound files and managing the playback thread.
+    """
+
     _instance: Union["SoundController", None] = None
 
     _stop_event: Union[threading.Event, None] = threading.Event()
@@ -27,6 +32,10 @@ class SoundController:
         return cls._instance
 
     def stop_sound(self):
+        """
+        Stop the currently playing sound and close the playback thread.
+        """
+
         self._streamed = 0
         self._stop_event.set()
 
@@ -44,6 +53,16 @@ class SoundController:
         websocket: websockets.ServerConnection,
         loop: asyncio.AbstractEventLoop,
     ):
+        """
+        Play a sound file using SoundDevice and SoundFile.
+        This method will stop any currently playing sound before starting a new one.
+
+        :param sound_path: Path to the sound file to be played.
+        :param sound_id: ID of the sound being played.
+        :param websocket: Websocket connection to send messages to.
+        :param loop: The asyncio event loop to run the coroutine in.
+        """
+
         self.stop_sound()
         self._stop_event.clear()
 

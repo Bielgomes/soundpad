@@ -15,6 +15,7 @@ class SQLite:
 
         :param db_path: Path to the SQLite database file.
         """
+
         if SQLite._instance is not None:
             raise Exception("This class is a singleton!")
 
@@ -27,12 +28,14 @@ class SQLite:
         """
         Get the SQLite connection.
         """
+
         return sqlite3.connect(self._instance.db_path)
 
     def __initialize_database(self) -> None:
         """
         Initialize the database and create the tables if they do not exist.
         """
+
         print("✨ Initializing database...")
         with self.connection() as connection:
             cursor = connection.cursor()

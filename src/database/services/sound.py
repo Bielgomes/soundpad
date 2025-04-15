@@ -14,6 +14,7 @@ class SoundService:
         """
         Create a new sound record.
         """
+
         try:
             new_sound = Sound.model_validate(sound)
         except Exception as error:
@@ -26,6 +27,7 @@ class SoundService:
         """
         Get all sound records.
         """
+
         sounds = [sound.model_dump() for sound in self.__sound_repository.get_all()]
         return sounds
 
@@ -33,6 +35,7 @@ class SoundService:
         """
         Get a sound record by ID.
         """
+
         sound = self.__sound_repository.get(id)
         if not sound:
             raise SoundNotFoundError(id)
@@ -43,6 +46,7 @@ class SoundService:
         """
         Update a sound record by ID.
         """
+
         try:
             updated_sound = Sound.model_validate(sound)
         except Exception as error:
@@ -54,6 +58,7 @@ class SoundService:
         """
         Delete a sound record by ID.
         """
+
         sound = self.__sound_repository.get(id)
         if not sound:
             raise SoundNotFoundError(id)

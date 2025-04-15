@@ -10,6 +10,7 @@ async def send_message(websocket: websockets.ServerConnection, message: json) ->
     :param websocket: The websocket connection to send the message to.
     :param message: The message to send.
     """
+
     if not isinstance(message, dict):
         raise ValueError("Message must be a dictionary")
 
