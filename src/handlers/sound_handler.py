@@ -32,7 +32,7 @@ async def handle_sound_remove(websocket: websockets.ServerConnection, event: dic
     if sound_id is None:
         raise MissingFieldError("soundId")
 
-    sound_service.remove(sound_id)
+    sound_service.delete(sound_id)
     await send_message(
         websocket,
         {"type": OutgoingEvent.SOUND_REMOVED, "soundId": sound_id},
