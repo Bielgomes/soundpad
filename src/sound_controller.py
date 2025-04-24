@@ -66,7 +66,7 @@ class SoundController:
         self.stop_sound()
         self._stop_event.clear()
 
-        output_device = await self.__get_voicemeeter_playback_device()
+        output_device = await self.__get_playback_device()
         self._playback_thread = threading.Thread(
             target=self.__play_sound,
             args=(output_device, sound_path, sound_id, websocket, loop),
@@ -142,9 +142,9 @@ class SoundController:
             loop,
         )
 
-    async def __get_voicemeeter_playback_device(self) -> int:
+    async def __get_playback_device(self) -> int:
         """
-        Get the device ID for sending audio to Voicemeeter.
+        Get the device ID of the Input device.
         """
 
         devices = sd.query_devices()
