@@ -6,7 +6,7 @@ import signal
 import websockets
 
 from global_config import config
-from handlers.global_event_handler import global_event_handler
+from handlers.global_event_handler import GlobalEventHandler
 
 
 async def echo(websocket: websockets.ServerConnection):
@@ -22,7 +22,7 @@ async def echo(websocket: websockets.ServerConnection):
             event = await websocket.recv()
             print(f"📫 Received event: {event}")
 
-            await global_event_handler(websocket, json.loads(event))
+            await GlobalEventHandler.handle_event(websocket, json.loads(event))
     except websockets.ConnectionClosed:
         print("❌ Connection closed")
         os.kill(os.getpid(), signal.SIGINT)

@@ -1,68 +1,79 @@
 import traceback
+from typing import Coroutine
 
 import websockets
 
-from handlers.config_handler import handle_config_fetch, handle_config_update
-from handlers.sound_handler import (
-    handle_sound_add,
-    handle_sound_fetch,
-    handle_sound_play,
-    handle_sound_remove,
-    handle_sound_stop,
-)
 from utils.errors import (
     EventError,
     MissingFieldError,
     UnsupportedEventError,
 )
-from utils.events import ErrorEvent, IncomingEvent
+from utils.events import ErrorEvent
 from utils.functions import send_message
 
-handlers = {
-    IncomingEvent.SOUND_ADD: handle_sound_add,
-    IncomingEvent.SOUND_REMOVE: handle_sound_remove,
-    IncomingEvent.SOUND_FETCH: handle_sound_fetch,
-    IncomingEvent.SOUND_PLAY: handle_sound_play,
-    IncomingEvent.SOUND_STOP: handle_sound_stop,
-    IncomingEvent.CONFIG_FETCH: handle_config_fetch,
-    IncomingEvent.CONFIG_UPDATE: handle_config_update,
-}
 
-
-async def global_event_handler(websocket: websockets.ServerConnection, event: dict):
+class GlobalEventHandler:
     """
-    Handle events received from the websocket connection.
+    Class to handle global events from the websocket connection.
 
-    This function checks the event type and performs the corresponding action.
-
-    :param websocket: The websocket connection to send the message to.
-    :param event: The event received from the client.
+    This class is responsible for processing incoming events and dispatching them to the appropriate handler.
     """
 
-    try:
-        if not event.get("type"):
-            raise MissingFieldError("type")
+    __handlers = {}
 
-        handler = handlers.get(event["type"])
-        if handler is None:
-            raise UnsupportedEventError(event["type"])
+    @staticmethod
+    def register(event: str) -> Coroutine:
+        """
+        Register a new event handler.
 
-        await handler(websocket, event)
+        :param event: The event type to register.
+        """
 
-    except EventError as error:
-        await send_message(
-            websocket,
-            {
-                "type": error.type,
-                "error": str(error),
-            },
-        )
-    except Exception as error:
-        print(traceback.format_exc())
-        await send_message(
-            websocket,
-            {
-                "type": ErrorEvent.GENERIC_ERROR,
-                "error": str(error),
-            },
-        )
+        def wrapper(handler: Coroutine):
+            if event in GlobalEventHandler.__handlers:
+                raise ValueError(f"❌ Event handler for {event} already registered")
+
+            GlobalEventHandler.__handlers[event] = handler
+            print(f"📦 {event.value} registered event handler")
+            return handler
+
+        return wrapper
+
+    @staticmethod
+    async def handle_event(websocket: websockets.ServerConnection, event: dict) -> None:
+        """
+        Handle events received from the websocket connection.
+
+        This function checks the event type and performs the corresponding action.
+
+        :param websocket: The websocket connection to send the message to.
+        :param event: The event received from the client.
+        """
+
+        try:
+            if not event.get("type"):
+                raise MissingFieldError("type")
+
+            handler = GlobalEventHandler.__handlers.get(event["type"])
+            if handler is None:
+                raise UnsupportedEventError(event["type"])
+
+            await handler(websocket, event)
+
+        except EventError as error:
+            await send_message(
+                websocket,
+                {
+                    "type": error.type,
+                    "error": str(error),
+                },
+            )
+        except Exception as error:
+            print(traceback.format_exc())
+            await send_message(
+                websocket,
+                {
+                    "type": ErrorEvent.GENERIC_ERROR,
+                    "error": str(error),
+                },
+            )
