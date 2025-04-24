@@ -29,6 +29,21 @@ async def handle_sound_add(websocket: websockets.ServerConnection, event: dict) 
     )
 
 
+@GlobalEventHandler.register(IncomingEvent.SOUND_UPDATE)
+async def handle_sound_update(
+    websocket: websockets.ServerConnection, event: dict
+) -> None:
+    sound = event.get("data", None)
+    if sound is None:
+        raise MissingFieldError("data")
+
+    updated_sound = sound_service.update(sound)
+    await send_message(
+        websocket,
+        {"type": OutgoingEvent.SOUND_UPDATED, "sound": updated_sound},
+    )
+
+
 @GlobalEventHandler.register(IncomingEvent.SOUND_REMOVE)
 async def handle_sound_remove(
     websocket: websockets.ServerConnection, event: dict
