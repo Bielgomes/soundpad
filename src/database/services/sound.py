@@ -64,3 +64,16 @@ class SoundService:
             raise SoundNotFoundError(id)
 
         self.__sound_repository.delete(id)
+
+    def set_is_valid(self, id: int, is_valid: bool) -> None:
+        """
+        Set the validity of a sound record by ID.
+        """
+
+        sound = self.__sound_repository.get(id)
+        if not sound:
+            raise SoundNotFoundError(id)
+
+        self.__sound_repository.set_is_valid(id, is_valid)
+        sound.is_valid = is_valid
+        return sound.model_dump()

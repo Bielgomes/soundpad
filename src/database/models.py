@@ -7,6 +7,7 @@ class Sound(BaseModel):
     id: Optional[int] = Field(default=None, title="Sound ID")
     name: str = Field(..., min_length=1, max_length=255, title="Sound Name")
     path: str = Field(..., min_length=1, max_length=255, title="Sound Path")
+    is_valid: bool = Field(default=True, title="Is Valid")
     created_at: Optional[str] = Field(None, title="Creation Date")
 
     @field_validator("path")

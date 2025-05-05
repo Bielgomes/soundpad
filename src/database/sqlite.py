@@ -45,6 +45,7 @@ class SQLite:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name VARCHAR(255) NOT NULL,
                 path VARCHAR(255) NOT NULL,
+                is_valid BOOLEAN NOT NULL DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """

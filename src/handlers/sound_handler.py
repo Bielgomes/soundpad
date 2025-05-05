@@ -1,19 +1,31 @@
 import asyncio
+from pathlib import Path
 
-import soundfile as sf
 import websockets
 
+from database.models import Sound
 from database.services.sound import SoundService
 from handlers.global_event_handler import GlobalEventHandler
 from sound_controller import sound_controller
 from utils.errors import (
-    InvalidSoundFileError,
     MissingFieldError,
 )
 from utils.events import IncomingEvent, OutgoingEvent
 from utils.functions import send_message
 
 sound_service = SoundService()
+
+
+def update_sound_validity(sound: Sound, is_valid: bool) -> None:
+    sound.is_valid = is_valid
+    sound_service.set_is_valid(sound.id, is_valid)
+
+
+def build_sound_update_message(sound: Sound) -> dict:
+    return {
+        "type": OutgoingEvent.SOUND_UPDATED,
+        "sound": sound.model_dump(),
+    }
 
 
 @GlobalEventHandler.register(IncomingEvent.SOUND_ADD)
@@ -79,11 +91,16 @@ async def handle_sound_play(
         raise MissingFieldError("soundId")
 
     sound = sound_service.get(sound_id)
+    if Path(sound.path).is_file():
+        if not sound.is_valid:
+            update_sound_validity(sound, True)
+            await send_message(websocket, build_sound_update_message(sound))
+    else:
+        if sound.is_valid:
+            update_sound_validity(sound, False)
+            await send_message(websocket, build_sound_update_message(sound))
 
-    try:
-        sf.SoundFile(sound.path)
-    except Exception:
-        raise InvalidSoundFileError(sound.path)
+        return
 
     await sound_controller.play_sound(
         sound.path, sound_id, websocket, asyncio.get_event_loop()

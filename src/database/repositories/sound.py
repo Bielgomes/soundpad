@@ -37,20 +37,22 @@ class SoundRepository(AbstractRepository):
     def get_all(self) -> list[Sound]:
         self._cursor.execute(
             """
-            SELECT id, name, path, created_at
+            SELECT id, name, path, is_valid, created_at
             FROM sound
             """
         )
         rows = self._cursor.fetchall()
         return [
-            Sound(id=row[0], name=row[1], path=row[2], created_at=row[3])
+            Sound(
+                id=row[0], name=row[1], path=row[2], is_valid=row[3], created_at=row[4]
+            )
             for row in rows
         ]
 
     def get(self, id: int) -> Union[Sound, None]:
         self._cursor.execute(
             """
-            SELECT id, name, path, created_at
+            SELECT id, name, path, is_valid, created_at
             FROM sound
             WHERE id = ?
             """,
@@ -58,7 +60,9 @@ class SoundRepository(AbstractRepository):
         )
         row = self._cursor.fetchone()
         if row:
-            return Sound(id=row[0], name=row[1], path=row[2], created_at=row[3])
+            return Sound(
+                id=row[0], name=row[1], path=row[2], is_valid=row[3], created_at=row[4]
+            )
 
         return None
 
@@ -80,5 +84,16 @@ class SoundRepository(AbstractRepository):
             WHERE id = ?
             """,
             (id,),
+        )
+        self._commit()
+
+    def set_is_valid(self, id: int, is_valid: bool) -> None:
+        self._cursor.execute(
+            """
+            UPDATE sound
+            SET is_valid = ?
+            WHERE id = ?
+            """,
+            (is_valid, id),
         )
         self._commit()
