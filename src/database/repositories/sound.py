@@ -1,6 +1,6 @@
 from typing import Union
 
-from database.models import Sound
+from database.models import Sound, UpdateSound
 from database.repositories.abstract_repository import AbstractRepository
 
 
@@ -66,16 +66,23 @@ class SoundRepository(AbstractRepository):
 
         return None
 
-    def update(self, sound: Sound) -> None:
-        self._cursor.execute(
-            """
-            UPDATE sound
-            SET name = ?, path = ?
-            WHERE id = ?
-            """,
-            (sound.name, sound.path, sound.id),
-        )
-        self._commit()
+    def update(self, id: int, sound: UpdateSound) -> Union[Sound, None]:
+        fields = {
+            "name": sound.name,
+            "path": sound.path,
+        }
+
+        updates = [f"{key} = ?" for key, value in fields.items() if value is not None]
+        values = [value for value in fields.values() if value is not None]
+
+        if updates:
+            query = f"UPDATE sound SET {', '.join(updates)} WHERE id = ?"
+            values.append(id)
+
+            self._cursor.execute(query, tuple(values))
+            self._commit()
+
+        return self.get(id)
 
     def delete(self, id: int) -> None:
         self._cursor.execute(

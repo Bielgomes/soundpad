@@ -23,6 +23,28 @@ class Sound(BaseModel):
         return path
 
 
+class UpdateSound(BaseModel):
+    id: int = Field(title="Sound ID")
+    name: Optional[str] = Field(
+        default=None, min_length=1, max_length=255, title="Sound Name"
+    )
+    path: Optional[str] = Field(
+        default=None, min_length=1, max_length=255, title="Sound Path"
+    )
+
+    @field_validator("path")
+    @classmethod
+    def validate_path(cls, path: str) -> str:
+        """
+        Validate the sound path to ensure it ends with .mp3 or .wav.
+        """
+
+        if path is not None and not path.endswith((".mp3", ".wav")):
+            raise ValueError("Sound path must end with .mp3 or .wav")
+
+        return path
+
+
 class Config(BaseModel):
     id: Optional[int] = Field(default=None, title="Config ID")
     input_volume: float = Field(default=0.5, ge=0.0, le=1.0, title="Input Volume")

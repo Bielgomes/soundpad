@@ -49,7 +49,7 @@ async def handle_sound_update(
     if sound is None:
         raise MissingFieldError("data")
 
-    updated_sound = sound_service.update(sound)
+    updated_sound = sound_service.update(sound["id"], sound)
     await send_message(
         websocket,
         {"type": OutgoingEvent.SOUND_UPDATED, "sound": updated_sound},

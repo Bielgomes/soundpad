@@ -1,4 +1,4 @@
-from database.models import Sound
+from database.models import Sound, UpdateSound
 from database.repositories.sound import SoundRepository
 from utils.errors import SoundNotFoundError, ValidationError
 
@@ -42,17 +42,18 @@ class SoundService:
 
         return sound
 
-    def update(self, id: int, sound: dict) -> None:
+    def update(self, id: int, sound: dict) -> dict:
         """
         Update a sound record by ID.
         """
 
         try:
-            updated_sound = Sound.model_validate(sound)
+            sound = UpdateSound.model_validate(sound)
         except Exception as error:
             raise ValidationError(str(error))
 
-        self.__sound_repository.update(id, updated_sound)
+        updated_sound = self.__sound_repository.update(id, sound)
+        return updated_sound.model_dump()
 
     def delete(self, id: int) -> None:
         """
