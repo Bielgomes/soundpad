@@ -107,14 +107,6 @@ async def handle_sound_play(
     )
 
 
-@GlobalEventHandler.register(IncomingEvent.SOUND_PAUSE)
-async def handle_sound_stop(
-    websocket: websockets.ServerConnection, event: dict
-) -> None:
+@GlobalEventHandler.register(IncomingEvent.SOUND_STOP)
+async def handle_sound_stop(websocket: websockets.ServerConnection, _) -> None:
     sound_controller.stop_sound()
-    await send_message(
-        websocket,
-        {
-            "type": OutgoingEvent.SOUND_PAUSED,
-        },
-    )
