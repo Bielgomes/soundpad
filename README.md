@@ -12,6 +12,6 @@
 > This application requires [Voicemeeter](https://vb-audio.com/Voicemeeter/) to be installed, configured and running for it to work properly.
 
 ## Contributors
-<a href="https://github.com/Bielgomes/soundpad/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Bielgomes/soundpad" />
+<a href="https://github.com/Bielgomes/zound/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Bielgomes/zound" />
 </a>

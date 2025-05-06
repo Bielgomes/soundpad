@@ -2,7 +2,7 @@ from utils.events import ErrorEvent
 
 
 class EventError(Exception):
-    """Base class for all Soundpad-related exceptions."""
+    """Base class for all Zound-related exceptions."""
 
     def __init__(self, message: str):
         super().__init__(message)
