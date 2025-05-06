@@ -1,4 +1,3 @@
-import os
 import sqlite3
 from typing import Union
 
@@ -21,9 +20,6 @@ class SQLite:
             raise Exception("This class is a singleton!")
 
         SQLite._instance = self
-        if not os.path.exists(db_path.rsplit("/", 1)[0]):
-            os.makedirs(db_path.rsplit("/", 1)[0])
-
         self.db_path = db_path
 
         self.__initialize_database()
@@ -80,4 +76,4 @@ class SQLite:
             print("✅ Database initialized successfully!")
 
 
-sqlite = SQLite(f"{os.getenv('APPDATA')}/soundpad/database.db")
+sqlite = SQLite("database.db")
