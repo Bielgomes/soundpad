@@ -44,9 +44,9 @@ async def hello():
             {
                 "type": IncomingEvent.CONFIG_UPDATE,
                 "config": {
-                    "input_volume": 0.1,
-                    "output_volume": 0.1,
-                    "input_muted": False,
+                    "headphone_volume": 0.1,
+                    "microphone_volume": 0.1,
+                    "headphone_muted": False,
                 },
             },
         )
@@ -57,9 +57,9 @@ async def hello():
             {
                 "type": IncomingEvent.CONFIG_UPDATE,
                 "config": {
-                    "input_volume": 0.2,
-                    "output_volume": 0.2,
-                    "input_muted": True,
+                    "headphone_volume": 0.2,
+                    "microphone_volume": 0.2,
+                    "headphone_muted": True,
                 },
             },
         )
@@ -70,9 +70,9 @@ async def hello():
             {
                 "type": IncomingEvent.CONFIG_UPDATE,
                 "config": {
-                    "input_volume": 0.5,
-                    "output_volume": 0.5,
-                    "input_muted": False,
+                    "headphone_volume": 0.5,
+                    "microphone_volume": 0.5,
+                    "headphone_muted": False,
                 },
             },
         )

@@ -15,7 +15,7 @@ class ConfigRepository(AbstractRepository):
     def get(self) -> Union[Config, None]:
         self._cursor.execute(
             """
-            SELECT id, input_volume, output_volume, input_muted
+            SELECT id, headphone_volume, microphone_volume, headphone_muted
             FROM config
             WHERE id = 1
             """
@@ -23,7 +23,10 @@ class ConfigRepository(AbstractRepository):
         row = self._cursor.fetchone()
         if row:
             return Config(
-                id=row[0], input_volume=row[1], output_volume=row[2], input_muted=row[3]
+                id=row[0],
+                headphone_volume=row[1],
+                microphone_volume=row[2],
+                headphone_muted=row[3],
             )
 
         return None
@@ -32,9 +35,9 @@ class ConfigRepository(AbstractRepository):
         self._cursor.execute(
             """
             UPDATE config
-            SET input_volume = ?, output_volume = ?, input_muted = ?
+            SET headphone_volume = ?, microphone_volume = ?, headphone_muted = ?
             WHERE id = 1
             """,
-            (config.input_volume, config.output_volume, config.input_muted),
+            (config.headphone_volume, config.microphone_volume, config.headphone_muted),
         )
         self._commit()

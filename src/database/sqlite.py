@@ -57,9 +57,9 @@ class SQLite:
             config_table = """
             CREATE TABLE IF NOT EXISTS config (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                input_volume REAL NOT NULL,
-                output_volume REAL NOT NULL,
-                input_muted BOOLEAN NOT NULL
+                headphone_volume REAL NOT NULL,
+                microphone_volume REAL NOT NULL,
+                headphone_muted BOOLEAN NOT NULL
             );
             """
 
@@ -71,7 +71,7 @@ class SQLite:
             if count == 0:
                 cursor.execute(
                     """
-                    INSERT INTO config (input_volume, output_volume, input_muted)
+                    INSERT INTO config (headphone_volume, microphone_volume, headphone_muted)
                     VALUES (0.5, 0.5, 0)
                     """
                 )

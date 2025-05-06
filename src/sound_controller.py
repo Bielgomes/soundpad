@@ -122,9 +122,9 @@ class SoundController:
             chunk = self._sound_file.read(config.chunk_size, dtype="float32")
 
             input_stream.write(
-                chunk * (config.input_volume if not config.input_muted else 0)
+                chunk * (config.headphone_volume if not config.headphone_muted else 0)
             )
-            output_stream.write(chunk * config.output_volume)
+            output_stream.write(chunk * config.microphone_volume)
 
             self._streamed += config.chunk_size
 

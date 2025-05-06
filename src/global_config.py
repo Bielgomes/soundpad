@@ -25,9 +25,9 @@ class GlobalConfig:
 
         self._chunk_size = 1024
 
-        self._input_volume = config.input_volume
-        self._output_volume = config.output_volume
-        self._input_muted = config.input_muted
+        self._headphone_volume = config.headphone_volume
+        self._microphone_volume = config.microphone_volume
+        self.headphone_muted = config.headphone_muted
 
         print("🔧 Config synced with database: { " + f"{config}" + " }")
 
@@ -44,35 +44,35 @@ class GlobalConfig:
         return self._chunk_size
 
     @property
-    def input_volume(self) -> float:
-        return self._input_volume
+    def headphone_volume(self) -> float:
+        return self._headphone_volume
 
-    @input_volume.setter
-    def input_volume(self, value: float) -> None:
+    @headphone_volume.setter
+    def headphone_volume(self, value: float) -> None:
         if 0 <= value <= 1:
-            self._input_volume = value
+            self._headphone_volume = value
         else:
             raise ValueError("Volume must be between 0 and 1.")
 
     @property
-    def output_volume(self) -> float:
-        return self._output_volume
+    def microphone_volume(self) -> float:
+        return self._microphone_volume
 
-    @output_volume.setter
-    def output_volume(self, value: float) -> None:
+    @microphone_volume.setter
+    def microphone_volume(self, value: float) -> None:
         if 0 <= value <= 1:
-            self._output_volume = value
+            self._microphone_volume = value
         else:
             raise ValueError("Volume must be between 0 and 1.")
 
     @property
-    def input_muted(self) -> bool:
-        return self._input_muted
+    def headphone_muted(self) -> bool:
+        return self._headphone_muted
 
-    @input_muted.setter
-    def input_muted(self, value: bool) -> None:
+    @headphone_muted.setter
+    def headphone_muted(self, value: bool) -> None:
         if isinstance(value, bool):
-            self._input_muted = value
+            self._headphone_muted = value
         else:
             raise ValueError("Muted status must be a boolean.")
 

@@ -34,9 +34,9 @@ async def handle_config_update(
 
     config_service.update(config)
 
-    global_config.input_volume = config.get("input_volume", 0.5)
-    global_config.output_volume = config.get("output_volume", 0.5)
-    global_config.input_muted = config.get("input_muted", False)
+    global_config.headphone_volume = config.get("headphone_volume", 0.5)
+    global_config.microphone_volume = config.get("microphone_volume", 0.5)
+    global_config.headphone_muted = config.get("headphone_muted", False)
 
     await send_message(
         websocket,
