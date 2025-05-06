@@ -49,12 +49,20 @@ class ConfigNotFoundError(EventError):
         self.type = ErrorEvent.CONFIG_NOT_FOUND
 
 
-class VoicemeeterPlaybackDeviceError(EventError):
-    """Raised when the playback device (Voicemeeter Input) is not found or is ambiguous."""
+class PlaybackDeviceNotFoundError(EventError):
+    """Raised when the playback device is not found or is ambiguous."""
 
     def __init__(self, message: str):
-        super().__init__(f"Voicemeeter playback device error: {message}")
-        self.type = ErrorEvent.VOICEMEETER_OUTPUT
+        super().__init__(f"Playback device not found: {message}")
+        self.type = ErrorEvent.PLAYBACK_DEVICE_NOT_FOUND
+
+
+class PlaybackDeviceAmbiguousError(EventError):
+    """Raised when the playback device is ambiguous."""
+
+    def __init__(self, message: str):
+        super().__init__(f"Playback device ambiguous: {message}")
+        self.type = ErrorEvent.PLAYBACK_DEVICE_AMBIGUOUS
 
 
 class UnsupportedEventError(EventError):

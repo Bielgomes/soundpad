@@ -7,7 +7,10 @@ import soundfile as sf
 import websockets
 
 from global_config import config
-from utils.errors import VoicemeeterPlaybackDeviceError
+from utils.errors import (
+    PlaybackDeviceAmbiguousError,
+    PlaybackDeviceNotFoundError,
+)
 from utils.events import OutgoingEvent
 from utils.functions import send_message
 
@@ -66,10 +69,10 @@ class SoundController:
         self.stop_sound()
         self._stop_event.clear()
 
-        output_device = await self.__get_playback_device()
+        playback_device = await self.__get_playback_device()
         self._playback_thread = threading.Thread(
             target=self.__play_sound,
-            args=(output_device, sound_path, sound_id, websocket, loop),
+            args=(playback_device, sound_path, sound_id, websocket, loop),
         )
         self._playback_thread.start()
 
@@ -157,10 +160,10 @@ class SoundController:
         ]
 
         if not voicemeeter_playback:
-            raise VoicemeeterPlaybackDeviceError("Voicemeeter Input device not found")
+            raise PlaybackDeviceNotFoundError("Voicemeeter Input device not found")
 
         if len(voicemeeter_playback) > 1:
-            raise VoicemeeterPlaybackDeviceError(
+            raise PlaybackDeviceAmbiguousError(
                 "Multiple Voicemeeter Input devices found"
             )
 
