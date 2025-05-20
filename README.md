@@ -1,6 +1,10 @@
 # 🎧 Zound
 
-[Zound](https://github.com/Bielgomes/zound) is an audio server that uses WebSocket to enable local sound control and playback.
+<div style="display: flex; gap: 10px; align-items: center; max-width: 450px; margin-bottom: 20px;">
+  <img src="./images/icon.ico" alt="Zound logo" width="60"/>
+
+  [Zound](https://github.com/Bielgomes/zound) is an audio server that uses WebSocket to enable local sound control and playback.
+</div>
 
 ![Issues](https://img.shields.io/github/issues/bielgomes/zound?style=for-the-badge)
 ![Stars](https://img.shields.io/github/stars/bielgomes/zound?style=for-the-badge)
